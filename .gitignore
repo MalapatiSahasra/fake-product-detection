@@ -1,0 +1,17 @@
+# OS
+.DS_Store
+
+# Python
+__pycache__/
+*.pyc
+
+# Generated / downloaded dataset images (regenerate via the scripts below;
+# source images are CC BY-NC 4.0, see docs/dataset_statistics.md)
+dataset/genuine/
+dataset/counterfeit/
+dataset/seed/
+dataset/gallery/
+dataset/master_reference.jpg
+
+# Vercel local project link (per-machine, not shared)
+web/.vercel
