@@ -10,6 +10,16 @@
 \usepackage{url}
 \usepackage{tikz}
 \usetikzlibrary{positioning,arrows.meta}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\renewcommand{\ttdefault}{cmtt}
+\setlength{\abovedisplayskip}{4pt plus 2pt minus 2pt}
+\setlength{\belowdisplayskip}{4pt plus 2pt minus 2pt}
+\setlength{\abovedisplayshortskip}{2pt plus 2pt minus 2pt}
+\setlength{\belowdisplayshortskip}{2pt plus 2pt minus 2pt}
+\setlength{\textfloatsep}{6pt plus 2pt minus 2pt}
+\setlength{\intextsep}{6pt plus 2pt minus 2pt}
+\setlength{\floatsep}{4pt plus 2pt minus 2pt}
 
 \def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
     T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
@@ -19,12 +29,33 @@
 \title{Fake Product Detection Using Image Matching: A Traditional Computer Vision Cascade for Multi-Brand Product Authentication}
 
 \author{
-\IEEEauthorblockN{Author Name}
+\IEEEauthorblockN{1\textsuperscript{st} Malapati Sahasra}
 \IEEEauthorblockA{
-\textit{Department of Artificial Intelligence and Machine Learning} \\
-\textit{Institution Name} \\
-City, Country \\
-email@example.com}
+\textit{Dept. of AI and Emerging Technology} \\
+\textit{Chinmaya Vishwavidyapeeth} \\
+Ernakulam, Kerala, India \\
+malapati.cvv241195@cvv.ac.in}
+\and
+\IEEEauthorblockN{2\textsuperscript{nd} Kothuri Rushya Sai}
+\IEEEauthorblockA{
+\textit{Dept. of AI and Emerging Technology} \\
+\textit{Chinmaya Vishwavidyapeeth} \\
+Ernakulam, Kerala, India \\
+kothuri.cvv241242@cvv.ac.in}
+\and
+\IEEEauthorblockN{3\textsuperscript{rd} B. R. Sneha}
+\IEEEauthorblockA{
+\textit{Dept. of AI and Emerging Technology} \\
+\textit{Chinmaya Vishwavidyapeeth} \\
+Ernakulam, Kerala, India \\
+belodu.cvv241233@cvv.ac.in}
+\and
+\IEEEauthorblockN{4\textsuperscript{th} Dr. Uma Narayanan}
+\IEEEauthorblockA{
+\textit{Dept. of AI and Emerging Technologies} \\
+\textit{Chinmaya Vishwavidyapeeth} \\
+Ernakulam, Kerala, India \\
+uma.narayanan@cvv.ac.in}
 }
 
 \maketitle
@@ -48,8 +79,8 @@ authentic if at most one check disagrees. The system is evaluated
 end-to-end on 1{,}600 real product photographs (800 genuine, 800
 counterfeit, 93.6\% unmodified real photography) drawn from a public
 Kaggle dataset and expanded with a reproducible geometric and photometric
-augmentation pipeline, achieving 57.00\% accuracy, 68.67\% precision, and
-25.75\% recall. We show that classical, GPU-free CV techniques can reject
+augmentation pipeline, achieving 57.38\% accuracy, 69.93\% precision, and
+25.87\% recall. We show that classical, GPU-free CV techniques can reject
 counterfeits with high confidence when they do trigger a positive
 verdict, while their recall is fundamentally limited by the intra-class
 visual diversity of real, multi-brand e-commerce catalogs --- a finding
@@ -77,26 +108,20 @@ altered proportions, a misspelled brand name, or the absence of a
 manufacturer's authentication code --- are easy to miss by eye and are
 rarely evaluated systematically at listing time.
 
-Most recent work on counterfeit and logo detection favors deep
-convolutional or transformer-based classifiers trained on large,
-brand-specific image corpora \cite{footwear2024}. These approaches can
-achieve high accuracy but require substantial labeled training data, GPU
-resources for training, and retraining whenever a new product line is
-introduced. For a student project, a small business, or an edge deployment
-with no training data and no GPU, a lighter-weight approach grounded in
-classical computer vision remains attractive: it is fully interpretable
-(every verdict traces to a concrete, human-checkable signal), requires no
-training phase, and runs on commodity hardware.
+Most recent work favors deep classifiers trained on large, brand-specific
+corpora \cite{footwear2024}, achieving high accuracy but requiring
+labeled data, GPU resources, and retraining per product line. For a
+student project, small business, or edge deployment with neither
+training data nor a GPU, a classical approach remains attractive: fully
+interpretable, no training phase, commodity hardware.
 
-This paper presents such a system: a four-module cascade that verifies
-product photographs across five brands --- Nike, Puma, Adidas, Gucci, and
-Louis Vuitton, spanning sportswear and luxury goods --- using only
-classical image processing and pattern matching --- ORB feature
-matching~\cite{orb2011} with a
-Brute-Force Hamming matcher, HSV color histogram correlation, Tesseract
-OCR~\cite{tesseract2007} combined with Ratcliff/Obershelp string
-similarity~\cite{ratcliff1988}, and barcode/QR decoding via
-ZBar~\cite{zbar}. The specific contributions of this work are:
+This paper presents such a system: a four-module cascade verifying
+photographs across five brands --- Nike, Puma, Adidas, Gucci, and Louis
+Vuitton, spanning sportswear and luxury goods --- using only classical
+image processing: ORB matching~\cite{orb2011} with Brute-Force Hamming,
+HSV histogram correlation, Tesseract OCR~\cite{tesseract2007} with
+Ratcliff/Obershelp similarity~\cite{ratcliff1988}, and barcode/QR
+decoding via ZBar~\cite{zbar}. Its contributions:
 
 \begin{enumerate}
     \item A \emph{gallery-based} (one-vs-many) reformulation of classical
@@ -120,55 +145,81 @@ reproducibility.\footnote{Code: \url{https://github.com/MalapatiSahasra/fake-pro
 \section{Related Work}
 \label{sec:related}
 
-Counterfeit and logo detection has been approached from several angles in
-the literature. Deep-learning classifiers trained directly on
-authentic/counterfeit image pairs have reported high accuracy on
-brand-specific sneaker datasets; for example, a convolutional network
-trained on 3{,}000 genuine and 2{,}000 counterfeit sneaker photographs
-supplied by a footwear resale marketplace reported accuracies above 95\%,
-substantially outperforming a support vector machine baseline on the same
-data~\cite{footwear2024}. Purpose-built object-detection datasets such as
-the Roboflow "Original or Fake Shoes" collection label authentic and
-counterfeit Nike Air Force~1 and Air Jordan~1 photographs with bounding
-boxes for exactly this task~\cite{roboflow2024}. Fake-logo detection has
-also been studied as a general brand-protection problem, with reported
-accuracies exceeding 99\% on curated logo datasets under controlled
-imaging conditions~\cite{fakelogo2024}.
+Local-feature matching and color-histogram comparison predate the
+current deep-learning-dominated era of logo and object recognition by
+over a decade~\cite{lowe2004,opencv}, and were the default toolkit for
+general-purpose visual matching before convolutional classifiers became
+practical to train at scale. Counterfeit and logo detection specifically,
+however, has more recently been approached almost exclusively through
+trained classifiers. A CNN trained on 3{,}000 genuine and 2{,}000
+counterfeit sneaker photographs from a footwear resale marketplace
+reported accuracies above 95\%, outperforming an SVM baseline on the
+same data~\cite{footwear2024}. Purpose-built object-detection datasets
+such as the Roboflow "Original or Fake Shoes" collection label authentic
+and counterfeit Nike Air Force~1/Jordan~1 photographs with bounding
+boxes~\cite{roboflow2024}. Fake-logo detection more broadly reports
+accuracies exceeding 99\% on curated datasets under controlled imaging
+conditions~\cite{fakelogo2024}.
 
-These systems share two properties that motivate the present work. First,
-they are trained, data-hungry classifiers: performance is tied to the
-size and diversity of a labeled training set, and a new product line
-typically requires retraining. Second, published accuracy figures are
-frequently measured on relatively controlled or curated imagery. In
-contrast, this paper deliberately evaluates a training-free, purely
-classical cascade against an uncurated, real-world e-commerce and
-lifestyle photo distribution --- product close-ups, warehouse photographs,
-and action shots mixed together, exactly the heterogeneity a real
-marketplace listing pool exhibits --- to characterize where classical
-feature matching genuinely holds up and where it does not.
+These systems share two properties that motivate the present work: they
+are data-hungry classifiers requiring retraining per product line, and
+published accuracy typically comes from controlled or curated imagery.
+In contrast, this paper evaluates a training-free, classical cascade
+against an uncurated, real-world photo distribution --- product
+close-ups, warehouse photographs, and action shots mixed together, the
+heterogeneity a real marketplace listing pool exhibits.
+
+Table~\ref{tab:related} positions this work against the systems above
+along the axes that most affect real-world deployability: whether a
+training phase is required, how many product/brand categories are
+covered, whether reported accuracy comes from curated or uncurated
+imagery, and whether the pipeline needs a GPU at inference time.
+
+\begin{table}[t]
+\caption{Comparison with Related Counterfeit/Logo Detection Work}
+\label{tab:related}
+\centering
+\begin{tabular}{lccc}
+\toprule
+System & Training & Brands & GPU \\
+\midrule
+Footwear CNN/SVM~\cite{footwear2024} & Required & 1 (sneakers) & Yes \\
+Fake-logo detector~\cite{fakelogo2024} & Required & Multi (curated) & Yes \\
+Roboflow shoe detector~\cite{roboflow2024} & Required & 1 (Nike models) & Yes \\
+\textbf{This work} & \textbf{None} & \textbf{5, uncurated} & \textbf{No} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+No entry in Table~\ref{tab:related} is accuracy-comparable to this work,
+since none report results on an uncurated, multi-brand, non-training
+pool; the comparison instead makes explicit the trade: higher published
+accuracy from a trained, narrower-domain classifier, versus zero
+training cost and CPU-only inference across a heterogeneous pool here.
 
 \section{System Architecture}
 \label{sec:architecture}
 
-\begin{figure}[htbp]
+\begin{figure}[t]
 \centering
+\resizebox{\columnwidth}{!}{%
 \begin{tikzpicture}[
-  box/.style={draw, rounded corners, minimum width=2.5cm, minimum height=0.9cm, align=center, font=\scriptsize},
-  node distance=0.35cm and 0.5cm
+  box/.style={draw, rounded corners, minimum width=1.6cm, minimum height=0.85cm, align=center, font=\scriptsize},
+  node distance=0.28cm and 0.32cm
 ]
 \node[box, fill=gray!10] (input) {Test\\photograph};
-\node[box, right=1.5cm of input, fill=blue!8] (logo) {Logo\\ORB match};
+\node[box, right=0.32cm of input, fill=blue!8] (logo) {Logo\\ORB match};
 \node[box, above=of logo, fill=blue!8] (color) {Color\\HSV histogram};
 \node[box, below=of logo, fill=blue!8] (typo) {Text\\OCR match};
 \node[box, below=of typo, fill=blue!8] (qr) {Barcode\\format check};
-\node[box, right=1.7cm of logo, minimum height=2.6cm, fill=orange!10] (vote) {Majority\\vote\\($\geq N{-}1$\\of $N$)};
-\node[box, right=1.2cm of vote, fill=green!10] (out) {Verdict:\\Genuine /\\Counterfeit};
-\node[box, above=1.9cm of logo, fill=gray!10, minimum height=0.9cm] (gallery) {Gallery of genuine\\reference photos};
+\node[box, right=0.32cm of logo, minimum width=1.9cm, minimum height=2.55cm, fill=orange!10] (vote) {Majority\\vote\\($\geq N{-}1$\\of $N$)};
+\node[box, right=0.28cm of vote, fill=green!10] (out) {Verdict:\\Genuine /\\Counterfeit};
+\node[box, above=1.75cm of logo, fill=gray!10, minimum height=0.85cm] (gallery) {Gallery of genuine\\reference photos};
 
 \draw[-Stealth] (input) -- (logo);
-\draw[-Stealth] (input.north) -- ++(0.3,0) |- (color.west);
-\draw[-Stealth] (input.south) -- ++(0.3,0) |- (typo.west);
-\draw[-Stealth] (input.south) -- ++(0.4,0) |- (qr.west);
+\draw[-Stealth] (input.north) -- ++(0.2,0) |- (color.west);
+\draw[-Stealth] (input.south) -- ++(0.2,0) |- (typo.west);
+\draw[-Stealth] (input.south) -- ++(0.3,0) |- (qr.west);
 \draw[-Stealth] (gallery.south) -- (color.north);
 \draw[-Stealth] (gallery) -- (logo);
 \draw[-Stealth] (logo) -- (vote);
@@ -176,7 +227,8 @@ feature matching genuinely holds up and where it does not.
 \draw[-Stealth] (typo) -- (vote);
 \draw[-Stealth] (qr) -- (vote);
 \draw[-Stealth] (vote) -- (out);
-\end{tikzpicture}
+\end{tikzpicture}%
+}
 \caption{Cascade architecture. Logo and color matching compare the test photograph against every image in a held-out gallery of genuine references and keep the best match; text and barcode checks are gallery-independent. A photograph passes if at most one of the active modules disagrees.}
 \label{fig:architecture}
 \end{figure}
@@ -215,6 +267,35 @@ otherwise. This "allow one miss" rule generalizes the conventional
 3-of-4 majority vote to any number of applicable modules, rather than
 forcing every photograph to pass a check that a given data source
 structurally cannot support.
+
+Algorithm~\ref{alg:cascade} states the full decision procedure. Every
+module runs independently, with no early exit, so a failed check never
+prevents the rest from running --- keeping every verdict fully
+explainable, since per-module scores are always available for audit.
+
+\begin{algorithm}[t]
+\caption{Cascade Verification}
+\label{alg:cascade}
+\begin{algorithmic}[1]
+\Require test image $t$, genuine gallery $G$, brand strings $B$, barcode expectation $q$ (optional)
+\Ensure verdict $\in \{\textsc{Authentic}, \textsc{Counterfeit}\}$
+\State $r_{\text{logo}} \gets$ \Call{LogoMatch}{$t$, $G$}
+\State $r_{\text{color}} \gets$ \Call{ColorMatch}{$t$, $G$}
+\State $r_{\text{text}} \gets$ \Call{TextMatch}{$t$, $B$}
+\If{barcode check applicable to data source}
+    \State $r_{\text{code}} \gets$ \Call{BarcodeCheck}{$t$, $q$}
+    \State $N \gets 4$
+\Else
+    \State $N \gets 3$
+\EndIf
+\State $\text{score} \gets \sum \mathbb{1}[r_m = \text{pass}]$ over active modules
+\If{$\text{score} \geq N - 1$}
+    \State \Return \textsc{Authentic}
+\Else
+    \State \Return \textsc{Counterfeit}
+\EndIf
+\end{algorithmic}
+\end{algorithm}
 
 \section{Verification Modules}
 \label{sec:modules}
@@ -304,6 +385,52 @@ forcing every photograph to fail a check the data source cannot
 structurally support; it remains fully functional and is exercised by the
 released code whenever a barcode-bearing photograph is supplied.
 
+\subsection{Implementation and Computational Complexity}
+\label{sec:complexity}
+
+The system is implemented in Python 3.14 using OpenCV~\cite{opencv} for
+ORB and histogram operations, \texttt{pytesseract} for
+Tesseract~\cite{tesseract2007}, and \texttt{pyzbar} for
+ZBar~\cite{zbar}. All experiments ran entirely on CPU on a consumer
+laptop (Apple silicon, no discrete GPU) --- itself part of the paper's
+argument: nothing here requires accelerator hardware, at either training
+time (there is none) or inference.
+
+For a gallery of size $k$, the logo module costs $O(P)$ per image for
+$P$ pixels of ORB descriptor extraction, plus $O(k \cdot n^2)$ Brute-Force
+Hamming matching for $n$ keypoints per image (OpenCV's implementation is
+vectorized but retains this asymptotic shape). The color module is
+cheaper: $O(P)$ histogram construction plus $O(k \cdot b)$ for $b =
+50\times60$ bins across the gallery. The text module's cost is
+dominated by Tesseract's own recognition pipeline and does not depend on
+gallery size at all, since it is compared against a fixed, small list of
+brand strings rather than a photo gallery.
+
+Table~\ref{tab:timing} reports measured per-module latency (mean over 30
+images, gallery size 20). OCR dominates end-to-end latency, consuming
+roughly two-thirds of total processing time despite no gallery
+dependence, since Tesseract's page-layout analysis is far more
+expensive than either vectorized OpenCV operation. Consequently,
+gallery size can grow to improve logo/color recall
+(Section~\ref{sec:discussion}) with little effect on total latency,
+since it scales only the two cheapest modules.
+
+\begin{table}[t]
+\caption{Measured Per-Module Latency (Gallery Size 20)}
+\label{tab:timing}
+\centering
+\begin{tabular}{lrl}
+\toprule
+Module & Mean latency & Scales with gallery? \\
+\midrule
+Logo (ORB)      & 34.2~ms & Yes, $O(k)$ \\
+Color (HSV)     & 7.0~ms  & Yes, $O(k)$, cheap per step \\
+Text (OCR)      & 146.5~ms & No \\
+Barcode (ZBar)  & 29.9~ms & No \\
+\bottomrule
+\end{tabular}
+\end{table}
+
 \section{Dataset Acquisition and Augmentation}
 \label{sec:dataset}
 
@@ -312,11 +439,33 @@ released code whenever a barcode-bearing photograph is supplied.
 Real product photographs were sourced from the "Fake Brand Dataset
 (Adidas, Nike, Gucci, Puma, LV)" published on Kaggle under a Creative
 Commons Attribution-NonCommercial 4.0 license~\cite{kaggledata}. All five
-brand subsets were used: 260 genuine / 253 counterfeit Nike images, 199
-genuine / 91 counterfeit Puma images, 178 genuine / 140 counterfeit
-Adidas images, 190 genuine / 152 counterfeit Gucci images, and 28 genuine
-/ 74 counterfeit LV images --- 855 genuine and 710 counterfeit raw images
-(1{,}565 total) spanning both sportswear and luxury-goods categories.
+brand subsets were used, spanning both sportswear (Nike, Puma, Adidas)
+and luxury-goods (Gucci, LV) categories, for 855 genuine and 710
+counterfeit raw images (1{,}565 total). Table~\ref{tab:dataset-brand}
+gives the per-brand breakdown; sample size varies considerably across
+brands (LV contributes only 102 raw images against Nike's 513), a
+consequence of using the source dataset as published rather than
+resampling it to be brand-balanced, and a factor revisited when
+interpreting per-brand results in Section~\ref{sec:perbrand}.
+
+\begin{table}[t]
+\caption{Raw Source Images by Brand}
+\label{tab:dataset-brand}
+\centering
+\begin{tabular}{lrrr}
+\toprule
+Brand & Genuine & Counterfeit & Total \\
+\midrule
+Nike   & 260 & 253 & 513 \\
+Puma   & 199 & 91  & 290 \\
+Adidas & 178 & 140 & 318 \\
+Gucci  & 190 & 152 & 342 \\
+LV     & 28  & 74  & 102 \\
+\midrule
+\textbf{Total} & \textbf{855} & \textbf{710} & \textbf{1{,}565} \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \subsection{Held-Out Reference Gallery}
 
@@ -340,13 +489,15 @@ the final evaluation set is overwhelmingly real photography (93.6\%,
 only the minimal top-up needed for an exact, class-balanced round number.
 The seed pool was expanded to exactly 800 genuine and 800 counterfeit
 images (1{,}600 total, a balanced 1:1 ratio) using a deterministic
-augmentation pipeline (fixed random seed 42). Each seed photograph is
-retained unmodified, and the remaining images needed to reach the target
-count are distributed evenly across seed photographs, each receiving a
-combination of:
+augmentation pipeline (fixed random seed 42). Every seed photograph is
+retained unmodified; the remaining top-up images are then assigned to a
+\emph{random sample} of seeds (\texttt{random.Random(42).sample}, not
+the first $N$ in file order --- brand subfolders sort alphabetically, so
+a first-$N$ rule would silently concentrate every top-up image into
+whichever brand sorts first), each receiving a combination of:
 
 \begin{itemize}
-    \item \textbf{Geometric rotation}: uniform random angle in $[-15\degree, +15\degree]$, simulating handheld camera tilt.
+    \item \textbf{Geometric rotation}: uniform random angle in $[-15^\circ, +15^\circ]$, simulating handheld camera tilt.
     \item \textbf{Brightness shift}: multiplicative scaling of the HSV Value channel by a factor uniform in $[0.6, 1.4]$, simulating indoor, outdoor, and flash-lit conditions.
     \item \textbf{Gaussian sensor noise}: additive noise with $\sigma$ uniform in $[5, 20]$, simulating smartphone camera sensor noise.
 \end{itemize}
@@ -355,7 +506,7 @@ Table~\ref{tab:dataset} summarizes the final dataset composition, and
 Table~\ref{tab:illumination} reports the resulting distribution of
 simulated illumination conditions.
 
-\begin{table}[htbp]
+\begin{table}[t]
 \caption{Dataset Composition}
 \label{tab:dataset}
 \centering
@@ -371,25 +522,40 @@ Final evaluation set   & 800 & 800 & Scored, 1:1 ratio \\
 \end{tabular}
 \end{table}
 
-\begin{table}[htbp]
-\caption{Simulated Illumination Conditions}
+\begin{table}[t]
+\caption{Illumination Conditions --- Realized Counts (n=103 Augmented Images)}
 \label{tab:illumination}
 \centering
-\begin{tabular}{lll}
+\begin{tabular}{lrrr}
 \toprule
-Condition & Brightness factor & Approx.\ share \\
+Condition & Genuine & Counterfeit & Total \\
 \midrule
-Low-light / underexposed & 0.60--0.85$\times$ & 31\% \\
-Normal / ambient          & 0.85--1.15$\times$ & 38\% \\
-Bright / overexposed      & 1.15--1.40$\times$ & 31\% \\
+Low-light (0.60--0.85$\times$) & 4  & 19 & 23 \\
+Normal (0.85--1.15$\times$)     & 7  & 44 & 51 \\
+Bright (1.15--1.40$\times$)     & 2  & 27 & 29 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
+Only the 103 augmented images (6.4\% of the set) carry a defined
+illumination label; the 1{,}497 unmodified originals keep whatever
+real-world lighting the source photograph had. Table
+\ref{tab:illumination} reports \emph{realized} manifest counts, not the
+theoretical $\sim$31/38/31\% split implied by the sampling interval
+widths, which at $n=103$ differs by ordinary sampling variance.
+
 Every generated image is traceable to its source seed photograph and
-augmentation parameters via a per-class manifest file, and the fixed
-random seed makes the entire dataset regenerable byte-for-byte from the
-1{,}565 raw source images.
+augmentation parameters via a per-class manifest file (recording, per
+image: filename, source seed, original/augmented type, and exact
+rotation/brightness/noise parameters), and the fixed random seed makes
+the entire dataset regenerable byte-for-byte from the 1{,}565 raw source
+images. Per this manifest, the 800 genuine output images trace to 787
+unique seed photographs (13 contributing a second, augmented image; none
+more than 2), and the 800 counterfeit output images trace to 710 unique
+seed photographs (90 contributing a second image, likewise capped at
+2) --- what this provenance chain does and does not establish about
+physical-unit independence across \emph{different} seed photographs is
+discussed in Section~\ref{sec:threats}.
 
 \section{Experimental Results}
 \label{sec:results}
@@ -402,7 +568,7 @@ text). Table~\ref{tab:confusion} reports the resulting confusion matrix,
 and Table~\ref{tab:metrics} the derived metrics, using \textsc{Genuine} as
 the positive class.
 
-\begin{table}[htbp]
+\begin{table}[t]
 \caption{Confusion Matrix (1,600 images, 5 brands)}
 \label{tab:confusion}
 \centering
@@ -410,13 +576,13 @@ the positive class.
 \toprule
  & Predicted Genuine & Predicted Counterfeit \\
 \midrule
-Actually Genuine     & TP = 206 & FN = 594 \\
-Actually Counterfeit & FP = 94  & TN = 706 \\
+Actually Genuine     & TP = 207 & FN = 593 \\
+Actually Counterfeit & FP = 89  & TN = 711 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\begin{table}[htbp]
+\begin{table}[t]
 \caption{Evaluation Metrics}
 \label{tab:metrics}
 \centering
@@ -424,10 +590,10 @@ Actually Counterfeit & FP = 94  & TN = 706 \\
 \toprule
 Metric & Value \\
 \midrule
-Accuracy  & 57.00\% \\
-Precision & 68.67\% \\
-Recall    & 25.75\% \\
-F1-score  & 0.3745 \\
+Accuracy  & 57.38\% \\
+Precision & 69.93\% \\
+Recall    & 25.87\% \\
+F1-score  & 0.3777 \\
 Mean inference time & $\approx$107~ms / image (CPU only) \\
 \bottomrule
 \end{tabular}
@@ -442,97 +608,199 @@ Accuracy, precision, recall and F1 are computed in the standard way:
 F_1 &= \frac{2 \cdot \text{Precision} \cdot \text{Recall}}{\text{Precision}+\text{Recall}}
 \end{align}
 
+\subsection{Per-Brand Breakdown}
+\label{sec:perbrand}
+
+Table~\ref{tab:perbrand} disaggregates cascade accuracy by brand. Recall
+varies more than twofold across brands (16.9\% for Gucci to 35.1\% for
+Adidas), which is consistent with the gallery-coverage explanation
+developed in Section~\ref{sec:discussion}: a fixed 20-image sample drawn
+from a 68-image, five-brand gallery allocates only a handful of
+reference images to any single brand, so per-brand recall is highly
+sensitive to how well that brand's specific reference images happen to
+represent its full product range.
+
+\begin{table}[t]
+\caption{Cascade Accuracy by Brand}
+\label{tab:perbrand}
+\centering
+\begin{tabular}{lrrrr}
+\toprule
+Brand & $n$ & Accuracy & Precision & Recall \\
+\midrule
+Adidas & 328 & 61.9\% & 78.7\% & 35.1\% \\
+Gucci  & 353 & 53.8\% & 66.7\% & 16.9\% \\
+LV     & 107 & 71.0\% & 33.3\% & 19.2\% \\
+Nike   & 517 & 58.2\% & 64.0\% & 22.9\% \\
+Puma   & 294 & 50.0\% & 77.3\% & 30.9\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+LV's low precision (33.3\%) relative to its highest raw accuracy is a
+direct small-sample effect: LV contributes only 26 genuine and 81
+counterfeit images to the evaluation set, the fewest of the five brands
+(Table~\ref{tab:dataset-brand} in Section~\ref{sec:dataset} reports its
+raw counts; its evaluation-set share reflects the augmentation top-up
+described there), so a handful of false positives has an outsized
+effect on its precision estimate.
+
+\subsection{Module Ablation Study}
+\label{sec:ablation}
+
+To understand which of the three active modules actually drives cascade
+performance, each module's pass/fail decision was also evaluated in
+isolation, as if it were the sole classifier. Table~\ref{tab:ablation}
+reports the result, together with the effect of relaxing or tightening
+the vote threshold.
+
+\begin{table}[t]
+\caption{Standalone Module Performance vs.\ the Full Cascade}
+\label{tab:ablation}
+\centering
+\begin{tabular}{lrrrr}
+\toprule
+Configuration & Accuracy & Precision & Recall & F1 \\
+\midrule
+Logo alone         & 52.7\% & 53.5\% & 41.8\% & 0.469 \\
+Color alone        & 66.9\% & 69.1\% & 61.4\% & \textbf{0.650} \\
+Text alone         & 49.5\% & 37.9\% &  1.4\% & 0.027 \\
+Cascade, $\geq 1$ of 3 & 61.9\% & 59.0\% & 78.5\% & 0.673 \\
+Cascade, $\geq 2$ of 3 & 57.3\% & 69.9\% & 25.9\% & 0.378 \\
+Cascade, $\geq 3$ of 3 & 49.9\% & 33.3\% &  0.1\% & 0.002 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+This is the most consequential finding of the ablation: \textbf{the
+color module alone (F1 = 0.650) outperforms the full $\geq 2$-of-3
+cascade (F1 = 0.378)} used for the headline results in
+Table~\ref{tab:metrics}. The cause is directly visible in the standalone
+rows --- the text module's individual recall is only 1.4\%, since most
+photographs in this uncurated dataset simply carry no OCR-legible brand
+text at all (Section~\ref{sec:qr} reports the analogous finding for
+barcodes), so requiring the text module to agree with color under an
+AND-like majority vote discards the large majority of color's correct
+positive calls. Relaxing the threshold to $\geq 1$-of-3 --- effectively
+an OR over the three modules --- recovers a substantially higher F1
+(0.673) by trading precision (59.0\%, down from 69.9\%) for a large
+recall gain (78.5\%, up from 25.9\%).
+
+This does not mean text verification is worthless: its near-zero
+\emph{recall} reflects the photography style, not a matching-logic flaw
+(Section~\ref{sec:modules} shows it correctly catches misspellings when
+text is legible). It does mean a uniform vote poorly combines modules of
+such unequal strength, and that vote threshold is a first-class
+deployment parameter --- Section~\ref{sec:discussion} returns to this.
+
 \section{Discussion}
 \label{sec:discussion}
 
-The headline result is an asymmetry between precision (68.67\%) and
-recall (25.75\%). When the cascade declares a photograph
-\textsc{Authentic}, it is correct roughly seven times out of ten; however
-it fails to recognize the majority of genuine photographs. This is not a
-software defect but a direct consequence of gallery-based classical
-feature matching applied to a high-diversity, multi-brand catalog: ORB
-keypoints and HSV histograms are highly effective at confirming that a
-photograph matches \emph{one specific known} reference (the single-SKU
-verification scenario these techniques were designed for), but a
-20-image gallery sampled from 68 held-out references across five brands
-cannot visually represent the full diversity of hundreds of distinct
-sportswear and luxury-goods products, camera angles, and photographic
-styles present in the evaluation set. A genuine photo of a product style
-absent from the sampled gallery is, correctly by design, scored as
-\emph{not resembling} any gallery entry. Recall is, unsurprisingly, lower
-here than in a Nike/Puma-only evaluation of the same pipeline (28.80\%
-recall on two brands vs. 25.75\% on five): adding three more brands to
-the same 20-image sampled gallery widens the space of "genuine" the
-gallery must represent without enlarging the sample, so per-image
-coverage thins out further.
+The headline result is an asymmetry between precision (69.93\%) and
+recall (25.87\%): when the cascade declares a photograph
+\textsc{Authentic} it is correct roughly seven times out of ten, yet it
+fails to recognize the majority of genuine photographs. This is not a
+software defect but a consequence of gallery-based matching on a
+high-diversity catalog: ORB/HSV excel at confirming a photograph matches
+\emph{one specific known} reference (their designed single-SKU
+scenario), but a 20-image gallery sampled from 68 references across five
+brands cannot represent hundreds of distinct products, angles, and
+styles; a genuine photo unlike anything sampled is, correctly by design,
+scored as not resembling any entry. Recall is accordingly lower than a
+Nike/Puma-only evaluation of the same pipeline (28.80\% on two brands
+vs. 25.87\% on five): widening "genuine" to five brands without
+enlarging the gallery thins per-image coverage further.
 
-This precision/recall profile is arguably well-suited to a specific
-deployment posture: a system that rarely mislabels a counterfeit as
-genuine (few false positives relative to its positive predictions) while
-under-flagging some genuine items for manual review is a defensible
-conservative default for a marketplace trust-and-safety pipeline, where a
-false \textsc{Authentic} verdict is more costly than an unnecessary manual
-check.
+This profile suits a specific deployment posture: rarely mislabeling a
+counterfeit as genuine, while under-flagging genuine items for manual
+review, is a defensible default for a trust-and-safety pipeline where a
+false \textsc{Authentic} is costlier than an unnecessary manual check.
 
-Two concrete levers would be expected to improve recall without
-sacrificing this precision profile: (i) enlarging the reference gallery
-(logo and color scores rise monotonically with gallery coverage, per
-Eq.~\eqref{eq:gallery}), and (ii) narrowing deployment scope to per-SKU
-verification --- comparing a unit against a small number of genuine
-photographs of that exact product --- which is the scenario classical
-feature matching handles best, and for which this same codebase already
-provides a single-master verification mode. A hybrid design, using a
-lightweight learned embedding to pre-filter or rank gallery candidates
-before applying the interpretable classical checks in this paper, is a
-promising direction for future work.
+Three levers would improve recall: (i) enlarging the reference gallery
+(logo/color scores rise monotonically with gallery coverage, per
+Eq.~\eqref{eq:gallery}), (ii) narrowing scope to per-SKU verification ---
+comparing a unit against a few genuine photographs of that exact
+product, which classical feature matching handles best and this
+codebase already supports, and (iii) revisiting the vote rule. The
+ablation (Section~\ref{sec:ablation}) shows the third lever matters
+most: color alone outperforms the deployed $\geq 2$-of-3 cascade on F1
+(0.650 vs. 0.378), since folding in a module with near-zero recall
+(text, 1.4\%) under an AND-like rule discards most of color's correct
+calls. Deployment should tune the vote threshold, or weight modules
+unevenly, against the target precision/recall point rather than the
+conventional "3-of-4" figure. A hybrid design pairing a lightweight
+learned embedding for gallery ranking with these interpretable checks is
+a further direction for future work.
 
-The barcode module's exclusion is itself an informative finding: 1{,}564
-of 1{,}565 raw source photographs (99.9\%) carried no scannable code at
-all,
-indicating that barcode-based verification is only viable when a listing
-photograph deliberately includes an authentication tag or the product's
-UPC/EAN barcode --- a photographic composition choice, not a universal
-property of e-commerce listings.
+The barcode module's exclusion is itself informative: 1{,}564 of 1{,}565
+raw photographs (99.9\%) carried no scannable code, so barcode-based
+verification is only viable when a listing photograph deliberately
+includes an authentication tag or UPC/EAN barcode --- a composition
+choice, not a universal property of e-commerce listings.
+
+\subsection{Threats to Validity}
+\label{sec:threats}
+
+\textbf{Label provenance.} Labels were assigned by the publisher, not
+independently re-verified here; residual noise propagates into the
+reported metrics, a limitation shared by studies without direct access
+to a brand's own authentication process.
+
+\textbf{Sample independence.} An augmented image always transforms
+exactly one recorded seed (Section~\ref{sec:dataset}), but whether two
+\emph{different} raw seed photographs show the same physical unit is
+undocumented and unverifiable; each is treated as independent, possibly
+overstating effective diversity if units repeat.
+
+\textbf{Single dataset source.} All real imagery is from one Kaggle
+publisher; photographic style and labeling conventions specific to it
+may not transfer elsewhere, so Section~\ref{sec:results}'s figures
+characterize this dataset's difficulty, not a universal constant.
+
+\textbf{Augmentation realism.} Perturbations in Section~\ref{sec:dataset}
+approximate, not exactly reproduce, real capture variance; at only 6.4\%
+of the final set (Table~\ref{tab:dataset}), their influence on headline
+metrics is small.
+
+\textbf{Gallery sampling variance.} Scores (Eq.~\eqref{eq:gallery})
+depend on which 20 of 68 held-out images are sampled; a different seed
+would shift exact metrics without changing the qualitative pattern.
 
 \section{Conclusion and Future Work}
 \label{sec:conclusion}
 
-We presented a four-module, training-free cascade for verifying product
-photographs across five brands --- Nike, Puma, Adidas, Gucci, and Louis
-Vuitton --- using classical computer vision: ORB-based logo matching,
-HSV histogram color matching, OCR-based text verification, and barcode
-format validation, combined with an "allow one miss" majority vote.
-Reformulating logo and color matching as one-vs-many gallery
-comparisons, together with a strict held-out gallery/evaluation split to
-prevent leakage, the system was evaluated on 1{,}600 real, multi-brand
-photographs (93.6\% unmodified real photography) sourced from a public
-dataset and expanded with a reproducible augmentation pipeline, achieving
-57.00\% accuracy, 68.67\% precision, and 25.75\% recall at approximately
-107~ms per image on CPU alone.
+We presented a four-module, training-free cascade --- ORB-based logo
+matching, HSV color matching, OCR text verification, and barcode
+validation combined via an "allow one miss" vote --- for verifying
+product photographs across five brands: Nike, Puma, Adidas, Gucci, and
+Louis Vuitton. Reformulating logo/color matching as one-vs-many gallery
+comparisons, with a strict held-out gallery/evaluation split to prevent
+leakage, the system was evaluated on 1{,}600 real, multi-brand
+photographs (93.6\% unmodified real photography), achieving 57.38\%
+accuracy, 69.93\% precision, and 25.87\% recall at $\approx$107~ms per
+image on CPU alone.
 
-The central finding is that classical feature matching's core strength
---- confirming a photograph against a known reference --- does not
-automatically generalize to brand-level verification across a highly
-diverse, multi-brand product catalog without a correspondingly
-comprehensive reference gallery; extending the same 20-image sampled
-gallery from two brands to five brands measurably reduced recall (28.80\%
-to 25.75\%), confirming that gallery coverage, not brand identity itself,
-is the binding constraint. Future work includes: (1) systematically
-measuring accuracy as a function of gallery size to quantify the
-coverage/runtime trade-off; (2) a hybrid pipeline combining a lightweight
-learned image embedding for gallery candidate ranking with the
-interpretable classical checks retained here; (3) evaluating the per-SKU
-single-master mode against a dataset of multiple genuine and counterfeit
-photographs of the same exact product; and (4) extending the barcode
-module's evaluation to a dataset that includes authentication-tag
-photography.
+Two findings stand out. First, gallery coverage, not brand identity, is
+the binding constraint on recall: the same 20-image sampled gallery gave
+28.80\% recall on two brands but only 25.87\% on five
+(Section~\ref{sec:discussion}). Second, a uniform majority vote is not
+the best way to combine modules of unequal strength: color alone
+outperforms the full cascade on F1 (0.650 vs.\ 0.378;
+Section~\ref{sec:ablation}). Future work: (1) accuracy vs.\ gallery
+size; (2) target-driven vote weighting, per Table~\ref{tab:ablation};
+(3) a hybrid embedding-ranked gallery with these checks; (4) the
+per-SKU single-master mode; (5) barcode evaluation on authentication-tag
+photography; and (6) a brand-balanced dataset (Table~\ref{tab:dataset-brand}'s
+five-fold disparity, 102 LV vs.\ 513 Nike).
 
 \section*{Acknowledgment}
-The product photographs used for evaluation are drawn from the
-"Fake Brand Dataset (Adidas, Nike, Gucci, Puma, LV)," published on Kaggle
-by prashanthgolla under a CC BY-NC 4.0 license~\cite{kaggledata}.
+Evaluation photographs are drawn from the "Fake Brand Dataset
+(Adidas, Nike, Gucci, Puma, LV)," published on Kaggle by prashanthgolla
+under a CC BY-NC 4.0 license~\cite{kaggledata}.
 
 \begin{thebibliography}{00}
+\setlength{\itemsep}{0pt}
+\setlength{\parsep}{0pt}
 
 \bibitem{orb2011}
 E. Rublee, V. Rabaud, K. Konolige, and G. Bradski, ``ORB: An efficient alternative to SIFT or SURF,'' in \textit{Proc. IEEE Int. Conf. Computer Vision (ICCV)}, Barcelona, Spain, 2011, pp. 2564--2571.
@@ -547,22 +815,22 @@ R. Smith, ``An overview of the Tesseract OCR engine,'' in \textit{Proc. 9th Int.
 J. W. Ratcliff and D. E. Metzener, ``Pattern matching: The Gestalt approach,'' \textit{Dr. Dobb's Journal}, no. 46, Jul. 1988.
 
 \bibitem{zbar}
-``ZBar bar code reader,'' [Online]. Available: \url{https://github.com/mchehab/zbar}. Accessed: 2026.
+``ZBar bar code reader,'' Available: \url{https://github.com/mchehab/zbar}.
 
 \bibitem{kaggledata}
-prashanthgolla, ``Fake Brand Dataset (Adidas, Nike, Gucci, Puma, LV),'' Kaggle. [Online]. Available: \url{https://www.kaggle.com/datasets/prashanthgolla/fake-brand-data}. Accessed: 2026.
+prashanthgolla, ``Fake Brand Dataset (Adidas, Nike, Gucci, Puma, LV),'' Kaggle. Available: \url{https://www.kaggle.com/datasets/prashanthgolla/fake-brand-data}.
 
 \bibitem{roboflow2024}
-SNKR, ``Original or Fake Shoes Object Detection Dataset,'' Roboflow Universe. [Online]. Available: \url{https://universe.roboflow.com/snkr/original-or-fake-shoes-vom34}. Accessed: 2026.
+SNKR, ``Original or Fake Shoes Object Detection Dataset,'' Roboflow Universe. Available: \url{https://universe.roboflow.com/snkr/original-or-fake-shoes-vom34}.
 
 \bibitem{footwear2024}
-``Image Classifier for an Online Footwear Marketplace to Distinguish between Counterfeit and Real Sneakers for Resale,'' \textit{Sensors}, vol. 24, no. 10, p. 3030, 2024. [Online]. Available: \url{https://www.mdpi.com/1424-8220/24/10/3030}.
+``Image Classifier for an Online Footwear Marketplace to Distinguish between Counterfeit and Real Sneakers for Resale,'' \textit{Sensors}, vol. 24, no. 10, p. 3030, 2024. Available: \url{https://www.mdpi.com/1424-8220/24/10/3030}.
 
 \bibitem{fakelogo2024}
-``Fake Logo Detection,'' \textit{Int. J. Research Publication and Reviews (IJRPR)}, vol. 6, no. 1. [Online]. Available: \url{https://ijrpr.com/uploads/V6ISSUE1/IJRPR37719.pdf}.
+``Fake Logo Detection,'' \textit{Int. J. Research Publication and Reviews (IJRPR)}, vol. 6, no. 1. Available: \url{https://ijrpr.com/uploads/V6ISSUE1/IJRPR37719.pdf}.
 
 \bibitem{opencv}
-G. Bradski, ``The OpenCV Library,'' \textit{Dr. Dobb's Journal of Software Tools}, 2000.
+G. Bradski, ``The OpenCV Library,'' \textit{Dr. Dobb's Journal}, 2000.
 
 \end{thebibliography}
 

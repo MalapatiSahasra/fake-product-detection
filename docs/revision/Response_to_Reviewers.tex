@@ -1,0 +1,117 @@
+\documentclass[10pt,a4paper]{article}
+\usepackage[margin=2cm]{geometry}
+\usepackage[T1]{fontenc}\usepackage{mathptmx}
+\usepackage{booktabs,tabularx,xcolor,enumitem}
+\usepackage[hidelinks]{hyperref}
+\setlength{\parindent}{0pt}\setlength{\parskip}{5pt}
+\newcolumntype{Y}{>{\raggedright\arraybackslash}X}
+\newenvironment{comment}{\par\medskip\noindent\begin{minipage}{\linewidth}\color{black!70}\itshape}{\end{minipage}\par\smallskip}
+\begin{document}
+
+{\Large\bfseries Response to Reviewers}\\[2pt]
+Paper ID 330 --- Track: Artificial Intelligence and Advanced Computing Paradigms\\
+Original title: \emph{Master Comparator: A Zero-Shot Computer Vision Framework for Real-Time Counterfeit Product Authentication}\\
+Revised title: \textbf{\emph{Master Comparator: Training-Free Few-Shot Gallery Matching for Counterfeit Product Authentication}}
+
+We thank both reviewers for their constructive comments. Every comment has been addressed. All new results come from a single re-run of the complete pipeline on the full evaluation set, and the scripts are included in the public code release (folder \emph{experiments}). Section and table numbers below refer to the revised manuscript.
+
+\section*{Reviewer \#1}
+
+\begin{comment}Comment 1.1: Change the common terms like ``computer vision'' in the title to support your novelty.\end{comment}
+\textbf{Response.} Done. The generic phrase ``Computer Vision Framework'' has been replaced by the specific contribution: \emph{training-free few-shot gallery matching}, i.e.\ verification against a small support gallery of genuine images with no learned parameters and no counterfeit examples. We also removed ``Real-Time'' from the title, since the measured latency (155~ms per image on one CPU thread, Table~II) is better described as interactive than real-time. \emph{(Title, Abstract, Sec.~I)}
+
+\begin{comment}Comment 1.2: Change zero-shot to few-shot.\end{comment}
+\textbf{Response.} Agreed and corrected throughout. The logo and color checks compare each test photograph with a gallery of $k$ labeled genuine images ($k{=}20$, about four per brand), which is few-shot rather than zero-shot. A new subsection, ``Why Few-Shot, Not Zero-Shot'' (Sec.~III-A), defines the setting precisely as \emph{one-class} (no counterfeit exemplars), \emph{few-shot} ($k$ genuine exemplars) and \emph{training-free} (no fitted parameters). Related work on few-shot learning (matching and prototypical networks) is now discussed (Sec.~II, Table~I). We also added a $k$-shot experiment (Sec.~VI-D, Fig.~2): cascade F1 rises from 0.03 at $k{=}1$ to 0.39 at $k{=}20$ and 0.58 at $k{=}68$ (mean over 20 random galleries per $k$).
+
+\begin{comment}Comment 1.3: Provide more details on experimental results.\end{comment}
+\textbf{Response.} The experimental section has been substantially expanded:
+\begin{itemize}[nosep,leftmargin=1.2em]
+\item A table of all fixed settings: thresholds, preprocessing, gallery seeds, software versions and hardware (Table~V).
+\item A step-by-step evaluation protocol (Sec.~V).
+\item The full confusion matrix, false-acceptance rate, and mean $\pm$ s.d.\ over 20 random galleries (Table~VI: accuracy 58.5 $\pm$ 1.3\%).
+\item Per-brand results together with each brand's gallery share (Table~VII).
+\item A module ablation and vote-rule study (Table~VIII).
+\item The gallery-size ($k$-shot) curve (Fig.~2).
+\item Baselines (Table~IX), robustness tests (Table~X) and failure analysis (Fig.~3, Table~XI); see Reviewer~\#2.
+\item Re-measured per-stage latency (Table~II).
+\end{itemize}
+
+\section*{Reviewer \#2}
+
+\begin{comment}Comment 2.1: Provide a clearer description of the dataset.\end{comment}
+\textbf{Response.} Sec.~IV has been rewritten and now covers:
+\begin{itemize}[nosep,leftmargin=1.2em]
+\item The source, license and the kinds of imagery it contains.
+\item Per-brand counts at every stage: raw, held-out gallery and evaluation set (Table~III).
+\item The gallery hold-out and augmentation procedure.
+\item A new table of exact statistics (Table~IV; also the additional comment below).
+\item A new leakage and duplicate audit (Sec.~IV-D). Three test images have a near-duplicate in the gallery pool, and eight image pairs appear under both labels in the source dataset. Removing these 19 images leaves the result essentially unchanged (F1 0.398 vs.\ 0.400).
+\end{itemize}
+
+\begin{comment}Comment 2.2: Provide a clearer evaluation protocol.\end{comment}
+\textbf{Response.} A dedicated section (Sec.~V, with Table~V) specifies:
+\begin{itemize}[nosep,leftmargin=1.2em]
+\item The disjoint gallery and evaluation split.
+\item That thresholds are fixed a priori and never tuned on the test set.
+\item The positive class and metric definitions, including false-acceptance rate and ROC-AUC.
+\item The gallery-variance procedure (20 seeds per $k$).
+\item How baseline thresholds are set: 5-fold cross-validation grouped by source photograph.
+\item The robustness subset and perturbation parameters.
+\item How latency is measured.
+\end{itemize}
+
+\begin{comment}Comment 2.3: Provide baseline comparisons.\end{comment}
+\textbf{Response.} Added in Sec.~VI-E and Table~IX. Every method uses the same gallery and the same best-match rule:
+\begin{itemize}[nosep,leftmargin=1.2em]
+\item \textbf{Classical, training-free:} SIFT matching, perceptual hash (pHash) and HOG.
+\item \textbf{Pretrained deep features without fine-tuning:} an ImageNet MobileNetV2 embedding.
+\item \textbf{Reference methods that use counterfeit labels:} a learned weighting of our three module scores, and a supervised logistic-regression probe on MobileNetV2 features.
+\end{itemize}
+Our color score has the highest AUC among the classical matchers (0.705 vs.\ 0.689 for pHash and 0.564 for SIFT) and is close to the pretrained CNN embedding (0.716). The supervised probe (AUC 0.854, accuracy 78.8\%) quantifies what the training-free, one-class setting gives up on this dataset.
+
+\begin{comment}Comment 2.4: Provide failure cases.\end{comment}
+\textbf{Response.} Added in Sec.~VI-G, with example images (Fig.~3), an error breakdown by background (Table~XI) and module-level error patterns. The analysis yields an important finding, which we report openly:
+\begin{itemize}[nosep,leftmargin=1.2em]
+\item Genuine photographs in this dataset are mostly studio shots on white backgrounds (52\% near-white pixels, against 24\% for counterfeits).
+\item Background fraction alone separates the classes (AUC 0.747).
+\item Restricting the color histogram to product pixels reduces it to chance (AUC 0.466).
+\end{itemize}
+The color cue therefore reflects photography style rather than product color. Most errors are genuine lifestyle or handheld photographs that are rejected, and counterfeit studio shots that are accepted.
+
+\begin{comment}Comment 2.5: The claims regarding real-world deployment should be supported by testing under diverse practical conditions.\end{comment}
+\textbf{Response.} Added in Sec.~VI-F and Table~X. A class-balanced set of 400 unmodified photographs was re-tested under eight capture conditions: blur, heavy JPEG compression, low resolution, 30$^\circ$ rotation, perspective change, 25\% occlusion, low light with sensor noise, and a warm color cast. The findings:
+\begin{itemize}[nosep,leftmargin=1.2em]
+\item Geometric changes are tolerated.
+\item Blur, compression and low resolution raise the false-acceptance rate to 18--24\%.
+\item Occlusion raises it to 40\%.
+\item Low light and color cast disable the color check (AUC 0.34 and 0.22).
+\end{itemize}
+In line with these results, we have \textbf{narrowed the deployment claims} (Sec.~VII). The system is now presented as suitable for controlled-capture, per-SKU verification (fixed background and lighting) and as a first-stage triage feeding human review, \emph{not} as a sole authority on unconstrained marketplace photographs. The word ``real-time'' has been removed from the title.
+
+\section*{Additional comment: exact dataset statistics}
+
+\begin{comment}Report the number of genuine samples; number of counterfeit samples; number of images per category; number of samples under each illumination condition; the genuine/counterfeit ratio; and whether multiple images originate from the same physical product.\end{comment}
+\textbf{Response.} A new subsection and table (Sec.~IV-C, Table~IV) report every requested statistic, computed exactly from the per-image manifests:
+
+\begin{tabularx}{\linewidth}{@{}lY@{}}
+\toprule
+Genuine samples & 800 (787 unmodified + 13 augmented) \\
+Counterfeit samples & 800 (710 unmodified + 90 augmented) \\
+Images per category & Nike 240/278, Puma 188/106, Adidas 168/160, Gucci 178/175, LV 26/81 (genuine/counterfeit); plus a separate held-out gallery of 68 genuine images \\
+Illumination conditions & Low light ($b<0.85$): 4 genuine / 19 counterfeit (23); normal: 7 / 44 (51); bright ($b>1.15$): 2 / 27 (29). These labels apply to the 103 augmented images; the 1{,}497 unmodified photographs keep their original lighting. \\
+Genuine : counterfeit ratio & 1 : 1 (800 : 800) \\
+Same physical product? & Within the pipeline, yes and fully documented: 103 source photographs (13 genuine, 90 counterfeit) each contribute exactly two images (original plus one augmented copy), and no source contributes more. Across different source photographs, the publisher does not record this; our near-duplicate audit finds 65 images (4.1\%) in 49 same-label pairs that very likely show the same item (a lower bound). \\
+\bottomrule
+\end{tabularx}
+
+The earlier statement that these counts were not systematically documented has been removed.
+
+\section*{Summary of other changes}
+\begin{itemize}[nosep,leftmargin=1.2em]
+\item All results were regenerated from one cached run. Images are capped at 1{,}600~px on the long side, and this is now documented. As a result the headline figures change slightly, from 57.38\% / 69.93\% / 25.87\% to 58.06\% / 70.48\% / 27.75\% (accuracy / precision / recall).
+\item The latency table was re-measured; the earlier ``107~ms'' figure was inconsistent with its own per-module breakdown.
+\item An unverifiable earlier comparison with a two-brand run was removed.
+\item Six references were added: matching networks, prototypical networks, shortcut learning, MobileNetV2, HOG and perceptual hashing.
+\end{itemize}
+
+\end{document}

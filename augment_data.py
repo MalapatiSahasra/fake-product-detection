@@ -114,14 +114,21 @@ def augment_category(seed_dir, output_dir, category_label, target_count=TARGET_P
 
     # 2. Distribute the remaining augmented images evenly across seeds so
     #    every physical product contributes a comparable number of samples.
+    #    Which seeds receive the +1 "extra" top-up is chosen via a seeded
+    #    random sample rather than simple index order: seed_paths is
+    #    sorted alphabetically, and brand subfolders are copied in with a
+    #    brand-name prefix (e.g. "adidas_0000.jpg"), so taking the first
+    #    `extra` seeds by index would silently concentrate every top-up
+    #    image into whichever brand sorts first.
     remaining = target_count - n_seeds
     base_per_seed, extra = divmod(remaining, n_seeds)
+    extra_indices = set(rng.sample(range(n_seeds), extra)) if extra else set()
 
     for idx, path in enumerate(seed_paths):
         img = cv2.imread(path)
         if img is None:
             continue
-        n_augments = base_per_seed + (1 if idx < extra else 0)
+        n_augments = base_per_seed + (1 if idx in extra_indices else 0)
         for a in range(n_augments):
             aug_img, meta = augment_once(img, rng)
             out_name = f"{category_label}_{img_counter:04d}_seed{idx:02d}_aug{a:03d}.jpg"
