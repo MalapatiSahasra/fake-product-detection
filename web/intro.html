@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="A training-free, CPU-only computer vision cascade that checks whether a product photo is genuine or counterfeit across Nike, Puma, Adidas, Gucci and Louis Vuitton.">
-<title>Authenticity Bench</title>
+<title>Master Comparator</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,500;0,600;0,700;1,500&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -238,8 +238,8 @@
 <header class="top">
   <div class="wrap brandrow">
     <a class="brand" href="#">
-      <span class="mark">A</span>
-      <span class="name">Authenticity Bench</span>
+      <span class="mark">M</span>
+      <span class="name">Master Comparator</span>
     </a>
     <nav>
       <a href="#problem">Problem</a>
@@ -260,8 +260,8 @@
       <p class="lede">
         A lightweight, training-free system that checks a product photo against a gallery of
         genuine references using logo keypoints, color, printed text and barcodes, then
-        combines the results with a majority vote. There's no neural network and no GPU,
-        and it takes about 107&nbsp;ms per image on a CPU.
+        combines the results with a majority vote. It needs only a few genuine reference photos, with no training and no GPU,
+        and takes about 155&nbsp;ms per image on a single CPU thread.
       </p>
       <div class="ctas">
         <a class="btn primary" href="index.html">Try the live demo →</a>
@@ -323,7 +323,7 @@
       <div class="card">
         <span class="k">01 — NO TRAINING</span>
         <h3>Works from reference photos</h3>
-        <p>Supply a gallery of genuine images and it's ready. There are no labels to collect and no model to fit.</p>
+        <p>Supply a few genuine images (few-shot) and it's ready. There are no counterfeit examples to collect and no model to fit.</p>
       </div>
       <div class="card">
         <span class="k">02 — INTERPRETABLE</span>
@@ -333,7 +333,7 @@
       <div class="card">
         <span class="k">03 — CPU ONLY</span>
         <h3>Fast on ordinary hardware</h3>
-        <p>About 107&nbsp;ms per image on a laptop CPU, built on OpenCV, Tesseract and ZBar.</p>
+        <p>About 155&nbsp;ms per image on one laptop CPU thread, built on OpenCV, Tesseract and ZBar.</p>
       </div>
     </div>
   </section>
@@ -441,11 +441,11 @@
     </div>
 
     <div class="statrail">
-      <div class="stat"><div class="v">57.4%</div><div class="l">Accuracy</div></div>
-      <div class="stat hi"><div class="v">69.9%</div><div class="l">Precision</div></div>
-      <div class="stat"><div class="v">25.9%</div><div class="l">Recall</div></div>
-      <div class="stat"><div class="v">0.378</div><div class="l">F1-score</div></div>
-      <div class="stat"><div class="v">107 ms</div><div class="l">Per image, CPU</div></div>
+      <div class="stat"><div class="v">58.1%</div><div class="l">Accuracy</div></div>
+      <div class="stat hi"><div class="v">70.5%</div><div class="l">Precision</div></div>
+      <div class="stat"><div class="v">27.8%</div><div class="l">Recall</div></div>
+      <div class="stat"><div class="v">0.398</div><div class="l">F1-score</div></div>
+      <div class="stat"><div class="v">155 ms</div><div class="l">Per image, CPU</div></div>
     </div>
 
     <div class="finding">
@@ -455,7 +455,7 @@
         <p>
           Precision is high: about 7 in 10 "genuine" verdicts are correct. Recall is limited
           because real catalogs are very diverse. The ablation also showed that the
-          <strong>color check alone (F1&nbsp;0.650)</strong> beats the full 2-of-3 cascade, because
+          <strong>color check alone (F1&nbsp;0.650)</strong> beats the full 2-of-3 cascade (F1&nbsp;0.398), because
           the text check rarely finds readable brand text in lifestyle photos. Tuning the vote
           threshold, or weighting checks differently, is the clearest way to improve results.
         </p>
@@ -467,16 +467,17 @@
               <tr><th>Configuration</th><th class="n">Acc.</th><th class="n">Prec.</th><th class="n">Recall</th><th class="n">F1</th></tr>
             </thead>
             <tbody>
-              <tr><td>Logo alone</td><td class="n">52.7%</td><td class="n">53.5%</td><td class="n">41.8%</td><td class="n">0.469</td></tr>
+              <tr><td>Logo alone</td><td class="n">52.3%</td><td class="n">52.8%</td><td class="n">44.4%</td><td class="n">0.482</td></tr>
               <tr class="best"><td>Color alone</td><td class="n">66.9%</td><td class="n">69.1%</td><td class="n">61.4%</td><td class="n">0.650</td></tr>
-              <tr><td>Text alone</td><td class="n">49.5%</td><td class="n">37.9%</td><td class="n">1.4%</td><td class="n">0.027</td></tr>
-              <tr><td>Cascade ≥ 1 of 3</td><td class="n">61.9%</td><td class="n">59.0%</td><td class="n">78.5%</td><td class="n">0.673</td></tr>
-              <tr class="deployed"><td>Cascade ≥ 2 of 3</td><td class="n">57.3%</td><td class="n">69.9%</td><td class="n">25.9%</td><td class="n">0.378</td></tr>
-              <tr><td>Cascade ≥ 3 of 3</td><td class="n">49.9%</td><td class="n">33.3%</td><td class="n">0.1%</td><td class="n">0.002</td></tr>
+              <tr><td>Text alone</td><td class="n">49.9%</td><td class="n">45.5%</td><td class="n">1.3%</td><td class="n">0.024</td></tr>
+              <tr><td>Cascade ≥ 1 of 3</td><td class="n">60.9%</td><td class="n">58.0%</td><td class="n">79.0%</td><td class="n">0.669</td></tr>
+              <tr class="deployed"><td>Cascade ≥ 2 of 3</td><td class="n">58.1%</td><td class="n">70.5%</td><td class="n">27.8%</td><td class="n">0.398</td></tr>
+              <tr><td>Cascade ≥ 3 of 3</td><td class="n">50.1%</td><td class="n">100.0%</td><td class="n">0.3%</td><td class="n">0.005</td></tr>
             </tbody>
           </table>
         </div>
         <p class="note">Module ablation study. QR was excluded because only 1 of 1,565 source photos contained a scannable code. The shaded row is the deployed configuration.</p>
+        <p class="note"><strong>Limitations.</strong> Best suited to controlled photos (fixed background, consistent lighting). On this dataset the color check largely rewards white studio backgrounds; low light, a color cast or a covered product can break it, so verdicts should feed human review rather than replace it.</p>
       </div>
     </div>
   </section>
@@ -509,7 +510,7 @@
 
 <footer>
   <div class="wrap">
-    <span>Authenticity Bench · Fake Product Detection using Image Matching</span>
+    <span>Master Comparator · Fake Product Detection using Image Matching</span>
     <span>Dataset: <a href="https://www.kaggle.com/datasets/prashanthgolla/fake-brand-data">Fake Brand Dataset</a> (CC BY-NC 4.0)</span>
   </div>
 </footer>

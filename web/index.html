@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="Upload a reference and test photo to run a live color/shape check, browse real multi-brand cascade results, and see the full system's measured accuracy on 1,600 real photos across 5 brands.">
-<title>Authenticity Bench</title>
+<title>Master Comparator</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,500;0,600;0,700;1,500&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -317,8 +317,8 @@
 <header class="top">
   <div class="wrap brandrow">
     <div class="brand">
-      <span class="mark">AB</span>
-      <span class="name">Authenticity Bench</span>
+      <span class="mark">MC</span>
+      <span class="name">Master Comparator</span>
     </div>
     <nav>
       <a href="#console">Console</a>
@@ -333,15 +333,15 @@
 
   <div class="hero">
     <div>
-      <p class="eyebrow">Traditional CV &middot; No neural network</p>
+      <p class="eyebrow">Training-free &middot; Few-shot &middot; CPU only</p>
       <h1>Four checks, one <em>verdict</em>: is this branded product photo genuine?</h1>
-      <p class="lede">Drop in a reference photo of the real product and a photo you want to verify. The bench runs a live color-profile and shape check in your browser, and shows what the full four-module cascade — logo matching, color, OCR text, and barcode — found on 1,600 real e-commerce photos across Nike, Puma, Adidas, Gucci, and LV.</p>
+      <p class="lede">Drop in a reference photo of the real product and a photo you want to verify. It runs a live color-profile and shape check in your browser, and shows what the full four-module cascade — logo matching, color, OCR text, and barcode — found on 1,600 real e-commerce photos across Nike, Puma, Adidas, Gucci, and LV.</p>
     </div>
     <div class="statrail" id="headline-stats">
-      <div class="stat hi"><div class="v">57.0%</div><div class="l">Accuracy, 1,600 images</div></div>
-      <div class="stat"><div class="v">68.7%</div><div class="l">Precision</div></div>
-      <div class="stat"><div class="v">25.8%</div><div class="l">Recall</div></div>
-      <div class="stat"><div class="v">5 brands</div><div class="l">Nike, Puma, Adidas, Gucci, LV</div></div>
+      <div class="stat hi"><div class="v">58.1%</div><div class="l">Accuracy, 1,600 images</div></div>
+      <div class="stat"><div class="v">70.5%</div><div class="l">Precision</div></div>
+      <div class="stat"><div class="v">27.8%</div><div class="l">Recall</div></div>
+      <div class="stat"><div class="v">5</div><div class="l">Brands: Nike, Puma, Adidas, Gucci, LV</div></div>
     </div>
   </div>
 
@@ -426,26 +426,26 @@
         <div class="hcell">Predicted genuine</div>
         <div class="hcell">Predicted counterfeit</div>
         <div class="hcell">Actually genuine</div>
-        <div class="tp"><div class="num">206</div><div class="sub">True positive</div></div>
-        <div class="fn"><div class="num">594</div><div class="sub">False negative</div></div>
+        <div class="tp"><div class="num">222</div><div class="sub">True positive</div></div>
+        <div class="fn"><div class="num">578</div><div class="sub">False negative</div></div>
         <div class="hcell">Actually counterfeit</div>
-        <div class="fp"><div class="num">94</div><div class="sub">False positive</div></div>
-        <div class="tn"><div class="num">706</div><div class="sub">True negative</div></div>
+        <div class="fp"><div class="num">93</div><div class="sub">False positive</div></div>
+        <div class="tn"><div class="num">707</div><div class="sub">True negative</div></div>
       </div>
       <div class="tablewrap">
         <table class="datatable">
           <tr><th>Metric</th><th>Value</th></tr>
-          <tr><td>Accuracy</td><td class="num">57.00%</td></tr>
-          <tr><td>Precision</td><td class="num">68.67%</td></tr>
-          <tr><td>Recall</td><td class="num">25.75%</td></tr>
-          <tr><td>F1-score</td><td class="num">0.3745</td></tr>
-          <tr><td>Reference gallery size</td><td class="num">20 images</td></tr>
+          <tr><td>Accuracy</td><td class="num">58.06%</td></tr>
+          <tr><td>Precision</td><td class="num">70.48%</td></tr>
+          <tr><td>Recall</td><td class="num">27.75%</td></tr>
+          <tr><td>F1-score</td><td class="num">0.398</td></tr>
+          <tr><td>Reference gallery size</td><td class="num">20 genuine images (few-shot)</td></tr>
           <tr><td>Pass rule</td><td>&ge; 2 of 3 checks (QR n/a on this data)</td></tr>
         </table>
       </div>
     </div>
     <div class="note" style="margin-top:20px;">
-      <strong>Reading these numbers:</strong> when the cascade says "genuine," it's right about 69% of the time — but it only recognizes 26% of genuine photos. Classical features (ORB keypoints, HSV histograms) can pin down one specific product against one reference; across hundreds of different products spanning five brands and photo styles, most genuine photos simply don't resemble any of the 20 sampled gallery references closely enough. That's a real limitation of traditional CV on high-diversity data, not a bug — see Method below.
+      <strong>Reading these numbers:</strong> when the cascade says "genuine," it's right about 70% of the time — but it only recognizes 28% of genuine photos. Classical features (ORB keypoints, HSV histograms) can pin down one specific product against one reference; across hundreds of different products spanning five brands and photo styles, most genuine photos simply don't resemble any of the 20 sampled gallery references closely enough. That's a real limitation of training-free matching on high-diversity data, not a bug. Recall rises as the gallery grows (F1 0.39 with 20 references, 0.58 with 68). It works best on controlled photos: a fixed background and consistent lighting. In our tests the color check mostly rewards white studio backgrounds, and low light or a color cast breaks it, so treat a verdict as a screening aid, not proof. See Method below.
     </div>
   </section>
 
@@ -474,7 +474,7 @@
     <div class="sectionhead">
       <div>
         <h2>How the cascade works</h2>
-        <p>Four independent checks vote; a photo passes if at most one disagrees.</p>
+        <p>Four independent checks vote; a photo passes if at most one disagrees (with no barcode in the photo: at least 2 of 3).</p>
       </div>
     </div>
     <div class="methodsteps">
@@ -512,7 +512,7 @@
 
 <footer>
   <div class="wrap fgrid">
-    <div>Authenticity Bench &mdash; a traditional-CV cascade over ORB, HSV histograms, Tesseract OCR and barcode validation.</div>
+    <div>Master Comparator &mdash; a traditional-CV cascade over ORB, HSV histograms, Tesseract OCR and barcode validation.</div>
     <div>Dataset: Fake Brand Dataset (Kaggle, CC BY-NC 4.0) &middot; Nike, Puma, Adidas, Gucci &amp; LV</div>
   </div>
 </footer>
@@ -612,19 +612,21 @@ function rgbToHsv(r, g, b) {
   return [h, s];
 }
 
-const H_BINS = 24, S_BINS = 16;
+// Same binning as modules/color_inspector.py: OpenCV HSV (H in 0-179, S in 0-255),
+// 50 hue x 60 saturation bins; Value channel dropped for lighting invariance.
+const H_BINS = 50, S_BINS = 60;
 function hsHistogram(imgData) {
   const hist = new Float64Array(H_BINS * S_BINS);
   const d = imgData.data;
   for (let i = 0; i < d.length; i += 4) {
     const [h, s] = rgbToHsv(d[i], d[i+1], d[i+2]);
-    const hb = Math.min(H_BINS - 1, Math.floor((h / 360) * H_BINS));
-    const sb = Math.min(S_BINS - 1, Math.floor(s * S_BINS));
+    const H = Math.min(179, Math.round(h / 2));      // OpenCV 8-bit hue
+    const S = Math.min(255, Math.round(s * 255));    // OpenCV 8-bit saturation
+    const hb = Math.floor(H * H_BINS / 180);
+    const sb = Math.floor(S * S_BINS / 256);
     hist[hb * S_BINS + sb]++;
   }
-  let sum = 0; for (let i = 0; i < hist.length; i++) sum += hist[i];
-  if (sum > 0) for (let i = 0; i < hist.length; i++) hist[i] /= sum;
-  return hist;
+  return hist;   // Pearson correlation is scale-invariant, so no normalisation needed
 }
 
 function correlate(a, b) {
@@ -642,8 +644,8 @@ function correlate(a, b) {
 }
 
 function colorCheck(imgRef, imgTest) {
-  const hRef = hsHistogram(toCanvas(imgRef, 200));
-  const hTest = hsHistogram(toCanvas(imgTest, 200));
+  const hRef = hsHistogram(toCanvas(imgRef, 1600));
+  const hTest = hsHistogram(toCanvas(imgTest, 1600));
   const corr = correlate(hRef, hTest);
   return { score: corr, passed: corr >= 0.7 };
 }

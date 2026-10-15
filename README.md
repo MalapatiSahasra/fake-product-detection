@@ -1,7 +1,8 @@
 # Fake Product Detection using Image Matching
 
-A traditional computer-vision cascade for verifying whether a photographed
-product is genuine or counterfeit — no neural network, no training. Four
+Master Comparator: a training-free, few-shot cascade for verifying whether a
+photographed product is genuine or counterfeit, using a small gallery of genuine
+reference photos (no neural network, no training). Four
 independent checks vote; a photo passes if at most one disagrees.
 
 **Live demo:** https://web-tau-indol-42.vercel.app
@@ -29,10 +30,10 @@ avoid any test image ever matching itself:
 
 | Metric | Value |
 |---|---|
-| Accuracy | 57.00% |
-| Precision | 68.67% |
-| Recall | 25.75% |
-| F1-score | 0.3745 |
+| Accuracy | 58.06% |
+| Precision | 70.48% |
+| Recall | 27.75% |
+| F1-score | 0.398 |
 
 QR/barcode checking was excluded from this run — only 1 of the 1,565 raw
 source photos actually contained a scannable code, so it isn't a
